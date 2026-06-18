@@ -1,6 +1,6 @@
 {
   "name": "iobroker.xsense",
-  "version": "0.6.7",
+  "version": "0.6.9",
   "description": "Manage your xsense Bridge and Sensors",
   "main": "main.js",
   "repository": {
@@ -29,6 +29,8 @@
     "@iobroker/adapter-core": "^3.4.3",
     "@iobroker/dm-utils": "^3.2.1",
     "aedes": "^1.2.0",
+    "@seald-io/nedb": "^4.1.2",
+    "aedes-packet": "^2.3.1",
     "amazon-cognito-identity-js": "^6.3.21",
     "mqtt": "^5.16.0",
     "net": "^1.0.2",

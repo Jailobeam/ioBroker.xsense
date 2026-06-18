@@ -1,8 +1,16 @@
 {
   "common": {
     "name": "xsense",
-    "version": "0.6.7",
+    "version": "0.6.9",
     "news": {
+      "0.6.9": {
+        "en": "(Jailobeam) Fixed self-test regression: always send test alarms through the X-Sense cloud, even when local MQTT is connected",
+        "de": "(Jailobeam) Selbsttest-Regression behoben: Testalarm auch bei verbundenem lokalem MQTT immer ueber die X-Sense-Cloud senden"
+      },
+      "0.6.8": {
+        "en": "(Jailobeam) Updated to latest upstream; preserved smoke detector self-test fixes for REST and MQTT, offline startup and persistent MQTT storage on Node.js 24",
+        "de": "(Jailobeam) Auf aktuellen Upstream aktualisiert; Testalarm-Fixes fuer REST und MQTT, Offline-Start und dauerhaften MQTT-Speicher unter Node.js 24 beibehalten"
+      },
       "0.6.7": {
         "en": "Dependencies have been updated\nupdate new Devices\nadd fire_drill_alarm for devices that support it\nadd mute_alarm for devices that support it",
         "de": "Abhängigkeiten wurden aktualisiert\nneue Geräte updaten\nFire_Drill_Alarm für Geräte, die das unterstützen\nfüge mute_alarm für Geräte hinzu, die es unterstützen",

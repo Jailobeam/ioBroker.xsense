@@ -111,6 +111,14 @@ or if you have a VM on proxmox check your CPU settings
 -->
 
 ## Changelog
+### 0.6.9 (2026-10-25)
+* (Jailobeam) fixed self-test regression introduced during the upstream update: send test alarms through the X-Sense cloud even when local MQTT is connected
+
+### 0.6.8 (2026-10-25)
+* (Jailobeam) updated to the latest upstream, including new devices, SBS50 alarm modes and MQTT updates
+* (Jailobeam) preserved smoke detector self-test fixes for both REST and MQTT requests (including XS0B-MR)
+* (Jailobeam) preserved offline startup and persistent MQTT storage compatible with Node.js 24
+
 ### **WORK IN PROGRESS**
 * (arteck) Dependencies have been updated
 * (arteck) add SBS50-Alarmstatus
