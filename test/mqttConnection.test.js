@@ -256,6 +256,106 @@ describe('info.MQTT_connection – onReady Fehlerfall', () => {
     });
 });
 
+describe('cached topology reconstruction', () => {
+    function loadCachedTopology(objects, states) {
+        const houses = {};
+
+        const ensureHouse = houseFolderId => {
+            if (!houses[houseFolderId]) {
+                const housePath = `devices.${houseFolderId}`;
+                houses[houseFolderId] = {
+                    houseId: String(states?.[`${housePath}.home_id`]?.val || houseFolderId),
+                    name: String(states?.[`${housePath}.houseName`]?.val || houseFolderId),
+                    region: String(states?.[`${housePath}.region`]?.val || ''),
+                    mqttRegion: String(states?.[`${housePath}.mqttRegion`]?.val || ''),
+                    mqttServer: String(states?.[`${housePath}.mqttServer`]?.val || ''),
+                    rooms: {},
+                    stations: {},
+                };
+            }
+            return houses[houseFolderId];
+        };
+
+        for (const [id, obj] of Object.entries(objects || {})) {
+            const parts = id.split('.');
+            if (parts[0] !== 'devices') {
+                continue;
+            }
+
+            if (obj.type === 'device' && parts.length === 3) {
+                const [, houseFolderId, bridgeSerial] = parts;
+                const house = ensureHouse(houseFolderId);
+                const stationPath = `devices.${houseFolderId}.${bridgeSerial}`;
+
+                house.stations[bridgeSerial] = house.stations[bridgeSerial] || {
+                    stationId: String(states?.[`${stationPath}.stationId`]?.val || ''),
+                    name: String(states?.[`${stationPath}.name`]?.val || obj.common?.name || bridgeSerial),
+                    serial: bridgeSerial,
+                    type: String(states?.[`${stationPath}.type`]?.val || ''),
+                    online: states?.[`${stationPath}.online`]?.val ?? false,
+                    data: {},
+                    devices: {},
+                    houseId: house.houseId,
+                    mqttRegion: house.mqttRegion,
+                    mqttServer: house.mqttServer,
+                };
+            }
+
+            if (obj.type === 'channel' && parts.length === 4) {
+                const [, houseFolderId, bridgeSerial, deviceSerial] = parts;
+                const house = ensureHouse(houseFolderId);
+                const stationPath = `devices.${houseFolderId}.${bridgeSerial}`;
+                const devicePath = `${stationPath}.${deviceSerial}`;
+
+                house.stations[bridgeSerial] = house.stations[bridgeSerial] || {
+                    stationId: String(states?.[`${stationPath}.stationId`]?.val || ''),
+                    name: String(states?.[`${stationPath}.name`]?.val || bridgeSerial),
+                    serial: bridgeSerial,
+                    type: String(states?.[`${stationPath}.type`]?.val || ''),
+                    online: states?.[`${stationPath}.online`]?.val ?? false,
+                    data: {},
+                    devices: {},
+                    houseId: house.houseId,
+                    mqttRegion: house.mqttRegion,
+                    mqttServer: house.mqttServer,
+                };
+
+                house.stations[bridgeSerial].devices[deviceSerial] = house.stations[bridgeSerial].devices[deviceSerial] || {
+                    deviceId: String(states?.[`${devicePath}.deviceId`]?.val || ''),
+                    name: String(states?.[`${devicePath}.name`]?.val || obj.common?.name || deviceSerial),
+                    serial: deviceSerial,
+                    type: String(states?.[`${devicePath}.type`]?.val || ''),
+                    online: states?.[`${devicePath}.online`]?.val ?? false,
+                    data: {},
+                    stationSerial: bridgeSerial,
+                };
+            }
+        }
+
+        return houses;
+    }
+
+    it('rekonstruiert houseId, Station und Gerät aus vorhandenen Adapter-Objekten', () => {
+        const objects = {
+            'devices.Example_Home.BRIDGE001': { type: 'device', common: { name: 'Bridge 1' } },
+            'devices.Example_Home.BRIDGE001.DEV00004': { type: 'channel', common: { name: 'Smoke 1' } },
+        };
+        const states = {
+            'devices.Example_Home.home_id': { val: 'HOUSE-UUID-1' },
+            'devices.Example_Home.houseName': { val: 'Example Home' },
+            'devices.Example_Home.BRIDGE001.stationId': { val: 'STATION-1' },
+            'devices.Example_Home.BRIDGE001.type': { val: 'SBS50' },
+            'devices.Example_Home.BRIDGE001.DEV00004.deviceId': { val: 'DEVICE-4' },
+            'devices.Example_Home.BRIDGE001.DEV00004.type': { val: 'XS01' },
+        };
+
+        const houses = loadCachedTopology(objects, states);
+        assert.equal(houses.Example_Home.houseId, 'HOUSE-UUID-1');
+        assert.equal(houses.Example_Home.stations.BRIDGE001.serial, 'BRIDGE001');
+        assert.equal(houses.Example_Home.stations.BRIDGE001.devices.DEV00004.type, 'XS01');
+    });
+});
+
 describe('info.MQTT_connection – externalMqttServerIP Validierung', () => {
     it('connectToMQTT bricht ab wenn externalMqttServerIP leer ist (exmqtt)', async () => {
         const adapter = createAdapterMock({ connectionType: 'exmqtt', externalMqttServerIP: '' });
@@ -845,14 +945,38 @@ describe('testAlarm – Pfad-Extraktion mit Haus-Ebene', () => {
         }
         assert.equal(testAlarmCalled, false);
     });
+
+    it('test_Alarm wird nach Ausführung wieder auf false zurückgesetzt', () => {
+        const states = {};
+
+        async function testAlarm(stateId) {
+            const msgStateId = stateId.replace(/\.test_Alarm$/, '.test_Alarm_Message');
+            states[msgStateId] = { val: 'in progress...', ack: true };
+
+            try {
+                states[msgStateId] = { val: 'done', ack: true };
+            } finally {
+                states[stateId] = { val: false, ack: true };
+            }
+        }
+
+        const stateId = 'xsense.0.devices.Mein_Zuhause.15298924.00000001.test_Alarm';
+        return testAlarm(stateId).then(() => {
+            assert.equal(states[stateId].val, false);
+            assert.equal(states[stateId].ack, true);
+        });
+    });
 });
 
 describe('_resolveDevicePath – Haus-Pfad-Auflösung', () => {
     const FORBIDDEN = /[*?[\]]/g;
 
-    function resolveDevicePath(xsenseClient, bridgeSerial, deviceSerial) {
-        if (xsenseClient?.houses) {
-            for (const house of Object.values(xsenseClient.houses)) {
+    function resolveDevicePath(xsenseClient, bridgeSerial, deviceSerial, houseCache = null) {
+        const houses = xsenseClient?.houses && Object.keys(xsenseClient.houses).length > 0
+            ? xsenseClient.houses
+            : houseCache;
+        if (houses) {
+            for (const house of Object.values(houses)) {
                 for (const station of Object.values(house.stations)) {
                     if (station.serial === bridgeSerial) {
                         const houseName = (house.name || house.houseId)

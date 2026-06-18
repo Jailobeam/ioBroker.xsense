@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "xsense",
-    "version": "0.6.5",
+    "version": "0.6.6",
     "news": {
+      "0.6.6": {
+        "en": "fix self-test and test_Alarm payloads for smoke detectors\nreset test_Alarm to false after execution\nreuse cached topology and stored session for offline startup",
+        "de": "Self-Test- und test_Alarm-Payloads fuer Rauchmelder korrigiert\ntest_Alarm nach der Ausfuehrung wieder auf false zuruecksetzen\ngecachte Topologie und gespeicherte Session fuer den Offline-Start wiederverwenden",
+        "ru": "fix self-test and test_Alarm payloads for smoke detectors\nreset test_Alarm to false after execution\nreuse cached topology and stored session for offline startup",
+        "pt": "fix self-test and test_Alarm payloads for smoke detectors\nreset test_Alarm to false after execution\nreuse cached topology and stored session for offline startup",
+        "nl": "fix self-test and test_Alarm payloads for smoke detectors\nreset test_Alarm to false after execution\nreuse cached topology and stored session for offline startup",
+        "fr": "fix self-test and test_Alarm payloads for smoke detectors\nreset test_Alarm to false after execution\nreuse cached topology and stored session for offline startup",
+        "it": "fix self-test and test_Alarm payloads for smoke detectors\nreset test_Alarm to false after execution\nreuse cached topology and stored session for offline startup",
+        "es": "fix self-test and test_Alarm payloads for smoke detectors\nreset test_Alarm to false after execution\nreuse cached topology and stored session for offline startup",
+        "pl": "fix self-test and test_Alarm payloads for smoke detectors\nreset test_Alarm to false after execution\nreuse cached topology and stored session for offline startup",
+        "uk": "fix self-test and test_Alarm payloads for smoke detectors\nreset test_Alarm to false after execution\nreuse cached topology and stored session for offline startup",
+        "zh-cn": "fix self-test and test_Alarm payloads for smoke detectors\nreset test_Alarm to false after execution\nreuse cached topology and stored session for offline startup"
+      },
       "0.6.5": {
         "en": "async fix\nfix battery info\nfix orphaned states without house folder from MQTT messages for stations not yet known (startup race and newly added devices)",
         "de": "asynchrone Korrektur\nBatterieinformationen reparieren\nBehebung von verwaisten Zuständen ohne Hausordner aus MQTT-Nachrichten für noch unbekannte Stationen (Startrennen und neu hinzugefügte Geräte)",

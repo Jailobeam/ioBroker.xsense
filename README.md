@@ -92,6 +92,11 @@ or if you have a VM on proxmox check your CPU settings
 -->
 
 ## Changelog
+### 0.6.6 (2026-08-29)
+* (Jailobeam) fixed self-test and `test_Alarm` payloads for smoke detectors
+* (Jailobeam) reset `test_Alarm` to `false` after execution
+* (Jailobeam) reused cached topology and stored session for offline startup
+
 ### 0.6.5 (2026-08-27)
 * (arteck) async fix
 * (arteck) fix battery info
