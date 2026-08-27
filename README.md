@@ -44,7 +44,8 @@ I accept no liability if the place burns down.
 
 ### ⚠️ Requirements
 - An XSense account with registered devices  
-- Internet connection for cloud communication  
+- Internet connection for cloud communication
+- MQTT Server for messages
 
 
 ---
@@ -80,8 +81,8 @@ or if you have a VM on proxmox check your CPU settings
 ------------------------------------------------------------------------------
 ------------------------------------------------------------------------------
 
+<img width="1425" height="768" alt="grafik" src="https://github.com/user-attachments/assets/fd52869a-48f3-403a-a97c-dfef587e02bf" />
 
-<img width="1029" height="438" alt="grafik" src="https://github.com/user-attachments/assets/86e4fd1c-1d4e-4234-a2ad-48b8dd9f418e" />
 
 <img width="2028" height="577" alt="grafik" src="https://github.com/user-attachments/assets/65cc5c71-4cd3-4502-b4bd-a4c7241d7708" />
 
