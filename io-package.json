@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "xsense",
-    "version": "0.6.4",
+    "version": "0.6.5",
     "news": {
+      "0.6.5": {
+        "en": "async fix\nfix battery info\nfix orphaned states without house folder from MQTT messages for stations not yet known (startup race and newly added devices)",
+        "de": "asynchrone Korrektur\nBatterieinformationen reparieren\nBehebung von verwaisten Zuständen ohne Hausordner aus MQTT-Nachrichten für noch unbekannte Stationen (Startrennen und neu hinzugefügte Geräte)",
+        "ru": "асинхронное исправление\nисправление информации о батарее\nИсправлена ошибка, из-за которой в сообщениях MQTT не отображалась папка \"дом\" для станций, которые еще неизвестны (проблема с запуском и добавление новых устройств).",
+        "pt": "correção assíncrona\ncorrigir informações da bateria\nCorrigir estados órfãos sem pasta \"house\" em mensagens MQTT para estações ainda desconhecidas (condição de inicialização e dispositivos recém-adicionados).",
+        "nl": "asynchrone oplossing\nBatterijgegevens corrigeren\nLos het probleem op van onbereikbare statussen zonder huismap in MQTT-berichten voor stations die nog niet bekend zijn (opstartproblemen en nieuw toegevoegde apparaten).",
+        "fr": "correction asynchrone\ninformations sur la batterie\nCorrection des états orphelins sans dossier de base provenant des messages MQTT pour les stations non encore connues (problèmes de démarrage et appareils nouvellement ajoutés).",
+        "it": "correzione asincrona\ninformazioni sulla batteria\nCorreggere gli stati orfani senza cartella di casa dai messaggi MQTT per le stazioni non ancora conosciute (startup race e dispositivi appena aggiunti)",
+        "es": "corrección asíncrona\ncorregir la información de la batería\nCorrige los estados huérfanos sin carpeta de inicio en los mensajes MQTT para estaciones aún desconocidas (carrera de inicio y dispositivos recién agregados).",
+        "pl": "poprawka asynchroniczna\nnapraw informacje o baterii\nnaprawa osieroconych stanów bez folderu domowego z wiadomości MQTT dla stacji jeszcze nieznanych (wyścig startowy i nowo dodane urządzenia)",
+        "uk": "виправлення асинхронності\nвиправити інформацію про батарею\nвиправлено осиротілі стани без папки \"house\" з повідомлень MQTT для станцій, які ще не відомі (перегони при запуску та щойно додані пристрої)",
+        "zh-cn": "异步修复\n修复电池信息\n修复 MQTT 消息中缺少 house 文件夹的孤立状态，这些状态对应于尚未识别的站点（启动竞争和新添加的设备）。"
+      },
       "0.6.4": {
         "en": "Dependencies have been updated",
         "de": "Die Abhängigkeiten wurden aktualisiert.",
@@ -80,19 +93,6 @@
         "pl": "poprawianie tłumaczeń\ndel deprectated setStateAsync",
         "uk": "фіксувати переклади\ndeprectated setStateAsync",
         "zh-cn": "固定翻译\n已贬值的设置"
-      },
-      "0.4.2": {
-        "en": "add retry logic",
-        "de": "retry logik hinzufügen",
-        "ru": "добавить логику retry",
-        "pt": "adicionar lógica de repetição",
-        "nl": "hertry logica toevoegen",
-        "fr": "ajouter la logique de réessayer",
-        "it": "aggiungere la logica",
-        "es": "añadir lógica de retry",
-        "pl": "dodaj logikę powtórzenia",
-        "uk": "додати логіку птиця",
-        "zh-cn": "添加重试逻辑"
       }
     },
     "titleLang": {

@@ -1,7 +1,7 @@
 'use strict';
 
 const utils = require('@iobroker/adapter-core');
-const {XSenseClient} = require('./lib/xsenseClient');
+const {XSenseClient, batInfoToPercent} = require('./lib/xsenseClient');
 const Json2iobXSense = require('./lib/json2iob');
 const MqttServerController = require('./lib/mqttServerController').MqttServerController;
 const DeviceController = require('./lib/deviceController').DeviceController;
@@ -237,7 +237,8 @@ class XSenseAdapter extends utils.Adapter {
      *
      * @param {string} bridgeSerial
      * @param {string} deviceSerial
-     * @returns {string}  z.B. "devices.Mein_Zuhause.15298924.00000001"
+     * @returns {string|null}  z.B. "devices.Mein_Zuhause.15298924.00000001", oder null wenn die
+     *                         Station (noch) nicht bekannt ist – verhindert Karteileichen ohne Haus-Ordner.
      */
     resolveDevicePath(bridgeSerial, deviceSerial) {
         if (this.xsenseClient?.houses) {
@@ -254,7 +255,10 @@ class XSenseAdapter extends utils.Adapter {
                 }
             }
         }
-        return `devices.${bridgeSerial}.${deviceSerial}`;
+        // Station (noch) unbekannt (z.B. neues Gerät, nächster Poll folgt) –
+        // KEIN Pfad ohne Haus-Ordner zurückgeben, sonst entstehen Karteileichen
+        // wie "devices.<bridge>.<device>" statt "devices.<haus>.<bridge>.<device>".
+        return null;
     }
 
     async messageParse(message) {
@@ -300,6 +304,12 @@ class XSenseAdapter extends utils.Adapter {
 
                     // Korrekten Pfad mit Haus-Ordner auflösen
                     const devicePath = this.resolveDevicePath(bridgeId, deviceId);
+                    if (!devicePath) {
+                        this.log.debug(
+                            `[XSense] Station ${bridgeId} (noch) unbekannt – MQTT-Nachricht verworfen (Topic: ${messageObj.topic})`,
+                        );
+                        return;
+                    }
 
                     this.log.debug(`[XSense] Bridge=${bridgeId} Device=${deviceId} Attr=${attribute} → ${devicePath}`);
 
@@ -309,7 +319,7 @@ class XSenseAdapter extends utils.Adapter {
                                 messageObj.payload.status === 'Normal' ? 3 :
                                     messageObj.payload.status === 'Low' ? 2 :
                                         messageObj.payload.status === 'Critical' ? 1 : 0;
-                            this.setState(`${devicePath}.batInfo`, {val: batLevel, ack: true});
+                            this.setState(`${devicePath}.batInfo`, {val: batInfoToPercent(batLevel), ack: true});
                             break;
                         }
                         case 'lifeend': {
@@ -562,6 +572,17 @@ class XSenseAdapter extends utils.Adapter {
                 if (this.config.mqttmessages) {
                     this.log.info(`[XSense MQTT] Topic: ${topic} | Payload: ${payload.toString()}`);
                 }
+
+                // Solange die Häuser/Stationen noch nicht geladen sind (erster loadAll()
+                // läuft erst in startIntervall(), NACH connectToMQTT()), können weder
+                // processMqttMessage() noch resolveDevicePath() die Station zuordnen.
+                // → Nachricht verwerfen, statt einen Fallback-Pfad ohne Haus-Ordner
+                //   anzulegen (z.B. "devices.<bridge>.<device>" statt "devices.<haus>.<bridge>.<device>").
+                if (!this.xsenseClient?.houses || Object.keys(this.xsenseClient.houses).length === 0) {
+                    this.log.debug(`[XSense] MQTT-Nachricht vor initialem Laden verworfen: ${topic}`);
+                    return;
+                }
+
                 // Zuerst versuchen via HA-konformes processMqttMessage
                 if (this.xsenseClient) {
                     const station = this.xsenseClient.processMqttMessage(topic, payload);

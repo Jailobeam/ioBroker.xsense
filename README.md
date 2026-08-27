@@ -92,8 +92,10 @@ or if you have a VM on proxmox check your CPU settings
 -->
 
 ## Changelog
-### **WORK IN PROGRESS**
+### 0.6.5 (2026-08-27)
 * (arteck) async fix
+* (arteck) fix battery info
+* (arteck) fix orphaned states without house folder from MQTT messages for stations not yet known (startup race and newly added devices)
 
 ### 0.6.4 (2026-06-22)
 * (arteck) Dependencies have been updated
@@ -107,10 +109,6 @@ or if you have a VM on proxmox check your CPU settings
 
 ### 0.6.1 (2026-05-03)
 * (arteck) fix deviceManager
-
-### 0.6.0 (2026-05-03)
-* (arteck) fix battery info
-* (arteck) add deviceManager
 
 [Older changelogs can be found there](CHANGELOG_OLD.md)
 
